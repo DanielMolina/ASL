@@ -171,25 +171,25 @@ public class MainActivity extends AppCompatActivity {
             // convert to double[] for easy conversion into Matrix
             double [] weights = weightList.stream().mapToDouble(Double::doubleValue).toArray();
             System.out.println("Loading Matrix Weights...");
-            w = new Matrix(weights, weights.length);
+            w = new Matrix(weights, 1);
 
             // extract features from csv
-            Matrix features = getFeatures(dataPath);
+            Matrix features = getFeatures(dataPath).transpose();
 
             // get soft class label using w*x + b
-            Matrix result = features.times(w);
+            Matrix result = w.times(features);
 
             // add bias
-            for(int i = 0; i < features.getRowDimension(); i++) {
-                result.set(i, 0, result.get(i,0) + b);
+            for(int i = 0; i < features.getColumnDimension(); i++) {
+                result.set(0, i, result.get(0, i) + b);
             }
 
             // average results for all time steps of a given datum
             double sum = 0;
-            for(int i = 0; i < features.getRowDimension(); i++) {
-                sum += result.get(i, 0);
+            for(int i = 0; i < features.getColumnDimension(); i++) {
+                sum += result.get(0, i);
             }
-            double ave = sum / features.getRowDimension();
+            double ave = sum / features.getColumnDimension();
             long endTime = System.nanoTime();
 
             long duration = (endTime - startTime);
