@@ -153,6 +153,8 @@ public class MainActivity extends AppCompatActivity {
         // load SVM parameters
         // first line is the bias term, following are the weights
         try {
+
+            long startTime = System.nanoTime();
             Matrix w;
             double b = 0.0;
             ArrayList<Double> weightList = new ArrayList<>();
@@ -168,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
 
             // convert to double[] for easy conversion into Matrix
             double [] weights = weightList.stream().mapToDouble(Double::doubleValue).toArray();
+            System.out.println("Loading Matrix Weights...");
             w = new Matrix(weights, weights.length);
 
             // extract features from csv
@@ -187,18 +190,26 @@ public class MainActivity extends AppCompatActivity {
                 sum += result.get(i, 0);
             }
             double ave = sum / weightList.size();
+            long endTime = System.nanoTime();
+
+            long duration = (endTime - startTime);
+            duration = duration / 1000000;
 
             // display result in new view
             Intent intent = new Intent(MainActivity.this, DisplayResultActivity.class);
+            intent.putExtra("time_taken",String.valueOf(duration));
+
             if (ave > 0) {
                 // about has label == 1
-                intent.putExtra("label", "positive");
-                startActivity(intent);
+                intent.putExtra("label", "About");
             } else {
                 // father has label == -1
-                intent.putExtra("label", "negative");
-                startActivity(intent);
+                intent.putExtra("label", "Father");
             }
+            System.out.println("Prediction is : "+intent.getStringExtra("label"));
+
+            startActivity(intent);
+
         } catch (Exception e) {
             System.out.println("Error reading csv");
             dataAlert("Error reading csv");
