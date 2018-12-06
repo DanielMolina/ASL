@@ -180,16 +180,16 @@ public class MainActivity extends AppCompatActivity {
             Matrix result = features.times(w);
 
             // add bias
-            for(int i = 0; i < weightList.size(); i++) {
+            for(int i = 0; i < features.getRowDimension(); i++) {
                 result.set(i, 0, result.get(i,0) + b);
             }
 
             // average results for all time steps of a given datum
             double sum = 0;
-            for(int i = 0; i < weightList.size(); i++) {
+            for(int i = 0; i < features.getRowDimension(); i++) {
                 sum += result.get(i, 0);
             }
-            double ave = sum / weightList.size();
+            double ave = sum / features.getRowDimension();
             long endTime = System.nanoTime();
 
             long duration = (endTime - startTime);
